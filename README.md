@@ -3,6 +3,8 @@
 ActiveRecord Record is a Railtie that instruments ActiveRecord and records SQL queries, model instantiations, and view
 renders.  Every request cycle will open a next TextEdit window with a summary of the request.
 
+Note: at the moment this development tool is Mac only.
+
 ## Installation
 
 Add this line to your application's Gemfile:
