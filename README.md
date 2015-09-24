@@ -24,6 +24,20 @@ environment and provide `COUNT_OBJECTS=true` in the `ENV`.  For example by runni
 
     $ COUNT_OBJECTS=true rails s
 
+You will often want to reload twice to see an accurate accounting of SQL queries.
+
+You can also wrap a section of code with `track_time_as` to get a breakdown for that section.
+
+```ruby
+track_time_as("this block seems slow") do
+  10_000.times do
+    # SLOW SQL!
+    # LOAD ALL THE OBJECTS!
+    # RENDER ONE MILLIONS PARTIALS!
+  end
+end
+```
+
 ## Development
 
 To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
