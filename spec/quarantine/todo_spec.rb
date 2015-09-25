@@ -45,37 +45,6 @@ describe TimeTracker do
   it "replaces scary numbers with (?)"
 end
 
-describe TimeTracker::Helper do
-  context ".track_time_as" do
-    context "when in a rails developement environment"
-      context "and COUNT_OBJECTS is true"
-        it "creates thread current hash keyed with :times"
-        it "creates thread current hash tracking sum or count"
-        context "when sum or count have not yet be set"
-            it "they will be defaulted to 0"
-
-    context "when in developement environment"
-      context  "and COUNT_OBJECTS is false"
-
-    context "when not in a rails developement environment"
-      context "and COUNT_OBJECTS is true"
-    context "when not in a rails developement environment"
-      context  "and COUNT_OBJECTS is false"
-  end
-
-  context ".use_ar_count_key" do
-    it "will switch out objects key for a given key"
-  end
-
-  context "#track_time_as" do
-    it "delegates to class method TimeTracker::Helper.track_time_as"
-  end
-
-  context ".included" do
-    it "adds track_time_as to ActiveController::Base"
-  end
-end
-
 describe TimeTracker::MethodWrapping do
   context "#track_method_time" do
     context "when COUNT_OBJECTS is true"
