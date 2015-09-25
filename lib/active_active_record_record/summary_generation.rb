@@ -1,4 +1,4 @@
-module ActiveRecordRecord
+module ActiveActiveRecordRecord
   module SummaryGeneration
     def clear_ar_counts
       Thread.current[:ar_counts] = {}

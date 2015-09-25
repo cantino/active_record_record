@@ -1,14 +1,14 @@
 require 'active_record_record/mixins/action_controller'
 require 'active_record_record/mixins/active_record'
 
-module ActiveRecordRecord
+module ActiveActiveRecordRecord
   class Railtie < Rails::Railtie
     ActiveSupport.on_load :action_controller do
-      ActionController::Base.include ActiveRecordRecord::Mixins::ActionController
+      ActionController::Base.include ActiveActiveRecordRecord::Mixins::ActionController
     end
 
     ActiveSupport.on_load :active_record do
-      ActiveRecord::Base.include ActiveRecordRecord::Mixins::ActiveRecord
+      ActiveRecord::Base.include ActiveActiveRecordRecord::Mixins::ActiveRecord
     end
 
     if ENV['COUNT_OBJECTS'] && Rails.env.development?

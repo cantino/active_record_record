@@ -5,7 +5,7 @@ require 'active_record_record/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "active_record_record"
-  spec.version       = ActiveRecordRecord::VERSION
+  spec.version       = ActiveActiveRecordRecord::VERSION
   spec.authors       = ["Mavenlink, Inc.", "Andrew Cantino", "Jack Wilson"]
   spec.email         = ["opensource@mavenlink.com"]
 

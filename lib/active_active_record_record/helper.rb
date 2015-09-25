@@ -1,4 +1,4 @@
-module ActiveRecordRecord
+module ActiveActiveRecordRecord
   module Helper
     def self.track_time_as(key, options = {})
       if ENV['COUNT_OBJECTS'] && Rails.env.development?

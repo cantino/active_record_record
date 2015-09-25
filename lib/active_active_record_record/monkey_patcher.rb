@@ -1,6 +1,6 @@
 require 'active_record_record/summary_generation'
 
-module ActiveRecordRecord
+module ActiveActiveRecordRecord
   module MonkeyPatcher
     def self.instrument_renders!
       ActionView::Renderer.module_eval do
@@ -128,7 +128,7 @@ module ActiveRecordRecord
 
     def self.hook_request_cycle!
       ActionController::Base.class_eval do
-        include ActiveRecordRecord::SummaryGeneration
+        include ActiveActiveRecordRecord::SummaryGeneration
 
         before_filter :clear_ar_counts
         after_filter :print_ar_counts
