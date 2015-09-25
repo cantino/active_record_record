@@ -1,4 +1,4 @@
-# ActiveRecordRecord
+# ActiveActiveRecordRecord
 
 ActiveRecord Record is a Railtie that instruments ActiveRecord and records SQL queries, model instantiations, and view
 renders.  Every request cycle will open a next TextEdit window with a summary of the request.
