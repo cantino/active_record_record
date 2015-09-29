@@ -38,7 +38,6 @@ end
 #     context ActionView::Renderer
 #       context "#render_with_time_logging"
 #         it "is aliased to #render and #time_logging"
-
 #     context ActiveRecord::ConnectionAdapters::QueryCache
 #       context "#select_all"
 
@@ -47,11 +46,6 @@ end
 
 #     context ActiveRecord::Base
 #       context "log_initialize"
-
-#     context ActiveController::Base
-#       context "#clear_ar_counts"
-#       context "#dump_counts"
-#       context "#print_ar_counts"
 #   end
 # end
 
