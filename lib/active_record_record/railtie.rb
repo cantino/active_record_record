@@ -23,3 +23,4 @@ module ActiveRecordRecord
     end
   end
 end
+
