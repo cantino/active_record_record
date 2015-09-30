@@ -3,18 +3,18 @@ require_relative "../lib/active_record_record/summary_generation"
 
 describe ActiveRecordRecord::SummaryGeneration do
  describe "#clear_ar_counts" do
-    before do
-      Thread.current[:request_start_time] = "00:00:00"
-      Thread.current[:ar_counts] = { test: "I love ar_counts" }
-      Thread.current[:times] = { times: "Are changing" }
-      Thread.current[:do_counts] = false
-      Thread.current[:objects_key] = :silly_user_key
+   before do 
+     Thread.current[:request_start_time] = "00:00:00"
+     Thread.current[:ar_counts] = { test: "I love ar_counts" }
+     Thread.current[:times] = { times: "Are changing" }
+     Thread.current[:do_counts] = false
+     Thread.current[:objects_key] = :silly_user_key
 
-      class StubClass
-        include ActiveRecordRecord::SummaryGeneration
-      end
-      StubClass.new.clear_ar_counts
-    end
+     class StubClass
+       include ActiveRecordRecord::SummaryGeneration
+     end
+     StubClass.new.clear_ar_counts
+   end
 
     it "will reset all thread current variables" do
       expect(Thread.current[:request_start_time]).to_not eq("00:00:00")
@@ -25,6 +25,28 @@ describe ActiveRecordRecord::SummaryGeneration do
     end
   end
 
-  describe "#dump_counts"
+  describe "#dump_counts" do 
+    let(:stat_data) do
+      {
+        default: {
+          sql_data: {},
+          query_cache_data: {},
+          render_data: {},
+          total: []
+        }
+      }
+    end
+    let(:out) { }
+    let(:prefix) { }
+
+    before do 
+      Thread.current[:ar_counts] = stat_data
+    end
+
+    it "will format things" do 
+    end
+
+  end
+
   describe "#print_ar_counts"
 end
