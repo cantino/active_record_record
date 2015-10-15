@@ -2,6 +2,28 @@ require 'spec_helper'
 require_relative "../lib/active_record_record/helper"
 
 describe ActiveRecordRecord::Helper do
+  # Start of temporary hack
+  before(:all) do 
+    class Rails
+      def self.env
+        Faker.new
+      end
+    end
+
+    class Faker
+      def development?
+        true
+      end
+    end
+  end
+
+  after(:all) do 
+    Object.send(:remove_const, :Rails)
+    Object.send(:remove_const, :Faker)
+  end
+  # end of temporary hack
+
+
   let(:caller) do
     [
       "/Users/fredflinstone/.rvm/gems/ruby-2.1.5@mavenlink/gems/pry-0.10.1/lib/pry/pry_instance.rb:355:in `eval'",
@@ -37,10 +59,10 @@ describe ActiveRecordRecord::Helper do
 
   describe ".track_time_as" do
     context "when in a rails developement environment" do
+      before { expect(Rails.env.development?).to be_truthy }
+
       context "and COUNT_OBJECTS is true" do
         before do
-          Rails = double("Rails", env: double("Faker",  development?: true))
-          expect(Rails.env.development?).to be_truthy
           ENV['COUNT_OBJECTS'] = "true"
           Thread.current[:times] = {}
         end
@@ -53,28 +75,55 @@ describe ActiveRecordRecord::Helper do
           expect(Thread.current[:times][:spaghetti][:sum]).to be_truthy
         end
       end
+      context  "and COUNT_OBJECTS is false" do
+        before do
+          ENV['COUNT_OBJECTS'] = nil
+          Thread.current[:times] = {}
+        end
+
+        it "will just yield the passed block" do
+          ActiveRecordRecord::Helper.track_time_as(:salad) { :rabbit_food }
+          expect(Thread.current[:times].has_key?(:salad)).to be_falsy
+        end
+      end
+    end
+
+    context "when not in a Rails developement environment" do
+      before do
+        allow_any_instance_of(Faker).to receive(:development?).and_return(false)
+        Thread.current[:times] = {}
+      end
+
+      context "and COUNT_OBJECTS is true" do
+        before { ENV['COUNT_OBJECTS'] = "true" }
+
+        it "will just yield the passed block" do
+          ActiveRecordRecord::Helper.track_time_as(:hot_chocolate) { :gross }
+          expect(Thread.current[:times].has_key?(:hot_chocolate)).to be_falsy
+        end
+      end
+
+      context "and COUNT_OBJECTS is false" do
+        before { ENV['COUNT_OBJECTS'] = nil }
+
+        it "will just yield the passed block" do
+          ActiveRecordRecord::Helper.track_time_as(:hot_dogs) { :delicious }
+          expect(Thread.current[:times].has_key?(:hot_dogs)).to be_falsy
+        end
+      end
     end
   end
 
-    context "when in developement environment"
-      context  "and COUNT_OBJECTS is false"
+  # describe ".use_ar_count_key"
+  #   context "given a count key"
+  #     it "will use the new count key for the duration of one block only"
 
-    context "when not in a rails developement environment"
-      context "and COUNT_OBJECTS is true"
-    context "when not in a rails developement environment"
-      context  "and COUNT_OBJECTS is false"
+  # describe ".clean_trace"
+  #   context "given a stack track trace and length"
+  #     it "parses out releavent app code from a stack trace array"
 
-  describe ".use_ar_count_key"
-    context "given a count key"
-      it "will use the new count key for the duration of one block only"
-
-  describe ".clean_trace"
-    context "given a stack track trace and length"
-      it "parses out releavent app code from a stack trace array"
-
-  describe ".clean_queries"
-    it "replaces scary numbers with (?)"
-    it "replaced extra spaces with a single space"
-
+  # describe ".clean_queries"
+  #   it "replaces scary numbers with (?)"
+  #   it "replaced extra spaces with a single space"
 end
 
