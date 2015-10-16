@@ -97,26 +97,28 @@ describe ActiveRecordRecord::Helper do
 
   describe ".clean_trace"
     let(:caller) do
+      # targets are indented more
       [
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:502:in `call'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `block (2 levels) in halting'",
-        "/Users/dude/workspace/place/app/controllers/application_controller.rb:791:in `handle_read_only_mode'",
+          "/Users/dude/workspace/place/app/controllers/application_controller.rb:791:in `handle_read_only_mode'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:429:in `block in make_lambda'",
-        "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:495:in `block (2 levels) in around'",
+        "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/railtie.rb:495:in `block (2 levels) in around'",
+        "/Users/dude/workspace/place/app/controllers/railtie.rb:791:in `handle_read_only_mode'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `call'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `block (2 levels) in halting'",
-        "/Users/dude/workspace/place/app/controllers/application_controller.rb:807:in `handle_stuff_errors'",
+          "/Users/dude/workspace/place/app/views/application_controller.rb:807:in `handle_stuff_errors'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:305:in `block in halting'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:494:in `call'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:494:in `block in around'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `block (2 levels) in halting'",
         "/Users/dude/workspace/place/app/controllers/application_controller.rb:363:in `set_timezone'",
-        "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:429:in `block in make_lambda'",
+          "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:429:in `block in make_lambda'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:502:in `call'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `block (2 levels) in halting'",
-        "/Users/dude/workspace/place/lib/place_extensions/store_location.rb:22:in `store_location'",
+          "/Users/dude/workspace/place/lib/place_extensions/store_location.rb:22:in `store_location'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:305:in `call'",
-        "/Users/dude/workspace/place/app/controllers/application_controller.rb:840:in `set_default_mailer_url_options'",
+          "/Users/dude/workspace/place/app/models/application_controller.rb:840:in `set_default_mailer_url_options'",
         "/Users/dude/.rvm/gems/ruby-2.2.2@place/bin/ruby_executable_hooks:15:in `<main>'",
       ]
     end
