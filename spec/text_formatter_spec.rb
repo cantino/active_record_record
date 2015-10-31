@@ -21,7 +21,9 @@ describe TextFormatter do
 
   context ".format" do
     it "will build a formatter and join the expected results into one string" do
-      expect(described_class.format(ar_counts)).to eq(expected_output.join)
+      printed_something, text = described_class.format(ar_counts)
+      expect(printed_something).to be_truthy
+      expect(text).to eq(expected_output.join)
     end
   end
 end

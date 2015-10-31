@@ -3,8 +3,8 @@ class TextFormatter
 
   def self.format(stats, prefix = '')
     formatter = new(prefix)
-    formatter.format(stats)
-    formatter.lines.join
+    printed_something = formatter.format(stats)
+    return printed_something, formatter.lines.join
   end
 
   def initialize(prefix = '')
