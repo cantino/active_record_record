@@ -10,42 +10,42 @@ module ActiveRecordRecord
       Thread.current[:objects_key] = :default
     end
 
-    def dump_counts(stat_data, out, prefix = '')
-      out.puts TextFormatter.format(stat_data, prefix = '')
-    end
-
-    def print_ar_counts
+    def print_ar_counts(formatter = TextFormatter)
       return if controller_name == 'page_not_found'
-      tmp, path = open_temp_file
-      tmp.puts "ActiveRecord counts for request to #{controller_name}##{action_name}\n\n"
+      temp_file, path = open_temp_file
+      temp_file.puts "ActiveRecord counts for request to #{controller_name}##{action_name}\n\n"
 
-      printed_something = dump_counts(Thread.current[:ar_counts][:default], tmp)
+      printed_something, default_text  = formatter.format(Thread.current[:ar_counts][:default])
+      temp_file.puts(text) unless default_text.empty?
 
-      tmp.puts "Timings:"
+      temp_file.puts "Timings:"
       (Thread.current[:times] || {}).to_a.sort_by { |i| i.last[:sum] }.reverse.each do |key, obj|
-        tmp.puts "\n\t#{key}\t\t#{obj[:sum]} seconds\t(#{obj[:count]} times with an average of #{obj[:sum] / obj[:count]} seconds)"
+        temp_file.puts "\n\t#{key}\t\t#{obj[:sum]} seconds\t(#{obj[:count]} times with an average of #{obj[:sum] / obj[:count]} seconds)"
 
         if Thread.current[:ar_counts][key]
-          dump_counts(Thread.current[:ar_counts][key], tmp, "\t\t\t")
+          _, custom_text = formatter.format(Thread.current[:ar_counts][key], "\t\t\t")
+          temp_file.puts(text) unless custom_text.empty?
         end
 
         printed_something = true
       end
 
       if printed_something
-        tmp.puts
-        tmp.puts "Request took approximately #{Time.now.to_f - Thread.current[:request_start_time].to_f} seconds."
-        tmp.close
+        temp_file.puts
+        temp_file.puts "Request took approximately #{Time.now.to_f - Thread.current[:request_start_time].to_f} seconds."
+        temp_file.close
         system("open #{path} -t -g")
       else
-        close_temp_file(tmp, path)
+        close_temp_file(temp_file, path)
       end
     end
 
+    private
+
     def open_temp_file
       path = "/tmp/#{Time.now.to_f}.counts.txt"
-      tmp = File.open(path, "w")
-      return tmp, path
+      temp_file = File.open(path, "w")
+      return temp_file, path
     end
 
     def close_temp_file(tem_file, path)
