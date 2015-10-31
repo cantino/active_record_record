@@ -53,46 +53,15 @@ describe ActiveRecordRecord::SummaryGeneration do
 
 
   describe "#print_ar_counts" do
-    let(:ar_counts) do
-      {
-        "User" => {
-          "api/v1/users_controller.rb:14:in `index', appc.rb:791:in `handle_mode',"\
-          "appc.rb:807:in `handle_errors',"\
-          "appc.rb:363:in `set_timezone',"\
-          "lib/place_extensions/store_location.rb:22:in"\
-          "`store_location'" => 2
-        },
-        "AccountMembership" => {
-          "api/v1/users_controller.rb:14:in `index',"\
-          " appc.rb:791:in `handle_mode',"\
-          " appc.rb:807:in `handle_errors',"\
-          " appc.rb:363:in `set_timezone',"\
-          " lib/place_extensions/store_location.rb:22:in `store_location'" => 2
-        },
-        "EmailAddress" => {
-          "api/v1/users_controller.rb:14:in `index',"\
-          " appc.rb:791:in `handle_mode',"\
-          " appc.rb:807:in `handle_errors',"\
-          " appc.rb:363:in `set_timezone',"\
-          " lib/place_extensions/store_location.rb:22:in `store_location'" => 2
-        }
-      }
-    end
-
 
     context "when printing something" do
       let(:stub_controller) { StubController.new }
       let(:stub_file)  { StubFile.new }
 
       before do
-        stub_controller.controller_name = "spongebob"
-        stub_controller.action_name = "squarepants"
-        Thread.current[:ar_counts] = { default:  ar_counts }
       end
 
       it "will add a Timings section" do
-        allow(stub_controller).to receive(:open_temp_file).and_return(stub_file, "/Users/bob")
-        expect(stub_controller.print_ar_counts).to eq("")
       end
     end
 
@@ -101,10 +70,6 @@ describe ActiveRecordRecord::SummaryGeneration do
       before do
         stub_controller.controller_name = "page_not_found"
         expect(stub_controller.controller_name).to eq("page_not_found")
-      end
-
-      it "will not print it the current controller is 'page_not_found'" do
-        expect(stub_controller.print_ar_counts).to be_nil
       end
     end
   end
