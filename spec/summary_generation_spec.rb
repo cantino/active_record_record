@@ -18,7 +18,7 @@ describe ActiveRecordRecord::SummaryGeneration do
         @file_contents = []
       end
 
-      def puts(content = "\n")
+      def puts(content = "")
         @file_contents << content + "\n"
       end
 
@@ -42,7 +42,7 @@ describe ActiveRecordRecord::SummaryGeneration do
       Thread.current[:times] = { times: "Are changing" }
       Thread.current[:do_counts] = false
       Thread.current[:objects_key] = :silly_user_key
-      stub_controller.new.clear_ar_counts
+      stub_controller.clear_ar_counts
     end
 
     after do
@@ -69,10 +69,18 @@ describe ActiveRecordRecord::SummaryGeneration do
       let(:stat_data) { ExampleData::AR_COUNT }
       let(:time_stub) { double("Timer", now: 100 ) }
       let(:expected_formatted_data) { ExampleData::ExpectedFinalPrint }
+      let(:options) do
+        {
+          tree: stat_data,
+          file: stub_file,
+          time_class: time_stub,
+          open_file: false,
+        }
+      end
 
       it "will produce a complete report" do
-        output = stub_controller.print_ar_counts(tree: stat_data, file: stub_file, time_class: time_stub)
-        expect(output).to be_truthy
+        binding.pry
+        stub_controller.print_ar_counts(options)
         expect(stub_file.file_contents).to match_array(expected_formatted_data)
       end
     end
@@ -83,6 +91,10 @@ describe ActiveRecordRecord::SummaryGeneration do
       before do
         stub_controller.controller_name = "page_not_found"
         expect(stub_controller.controller_name).to eq("page_not_found")
+      end
+
+      it "will return nil" do
+        expect(stub_controller.print_ar_counts).to be_nil
       end
     end
   end
