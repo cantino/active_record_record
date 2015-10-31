@@ -56,25 +56,25 @@ describe ActiveRecordRecord::SummaryGeneration do
     let(:ar_counts) do
       {
         "User" => {
-          "api/v1/users_controller.rb:14:in `index', application_controller.rb:791:in `handle_read_only_mode',"\
-          "application_controller.rb:807:in `handle_intuit_errors',"\
-          "application_controller.rb:363:in `set_timezone',"\
-          "lib/mavenlink_extensions/store_location.rb:22:in"\
+          "api/v1/users_controller.rb:14:in `index', appc.rb:791:in `handle_mode',"\
+          "appc.rb:807:in `handle_errors',"\
+          "appc.rb:363:in `set_timezone',"\
+          "lib/place_extensions/store_location.rb:22:in"\
           "`store_location'" => 2
         },
         "AccountMembership" => {
           "api/v1/users_controller.rb:14:in `index',"\
-          " application_controller.rb:791:in `handle_read_only_mode',"\
-          " application_controller.rb:807:in `handle_intuit_errors',"\
-          " application_controller.rb:363:in `set_timezone',"\
-          " lib/mavenlink_extensions/store_location.rb:22:in `store_location'" => 2
+          " appc.rb:791:in `handle_mode',"\
+          " appc.rb:807:in `handle_errors',"\
+          " appc.rb:363:in `set_timezone',"\
+          " lib/place_extensions/store_location.rb:22:in `store_location'" => 2
         },
         "EmailAddress" => {
           "api/v1/users_controller.rb:14:in `index',"\
-          " application_controller.rb:791:in `handle_read_only_mode',"\
-          " application_controller.rb:807:in `handle_intuit_errors',"\
-          " application_controller.rb:363:in `set_timezone',"\
-          " lib/mavenlink_extensions/store_location.rb:22:in `store_location'" => 2
+          " appc.rb:791:in `handle_mode',"\
+          " appc.rb:807:in `handle_errors',"\
+          " appc.rb:363:in `set_timezone',"\
+          " lib/place_extensions/store_location.rb:22:in `store_location'" => 2
         }
       }
     end
