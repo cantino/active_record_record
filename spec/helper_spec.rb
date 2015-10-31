@@ -97,7 +97,6 @@ describe ActiveRecordRecord::Helper do
 
   describe ".clean_trace"
   let(:caller) do
-    # targets are indented more
     [
       "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:502:in `call'",
       "/Users/dude/.rvm/gems/ruby-2.2.2@place/gems/activesupport-4.1.13/lib/active_support/callbacks.rb:306:in `block (2 levels) in halting'",
