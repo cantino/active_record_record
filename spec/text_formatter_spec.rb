@@ -5,7 +5,7 @@ require_relative 'support/example_data'
 describe TextFormatter do
   include ExampleData
   let(:ar_counts) { ExampleData::AR_COUNT[:ar_counts][:default] }
-  let(:expected_output) { ExampleData::ExpextedData }
+  let(:expected_output) { ExampleData::ExpextedTextFormat }
 
   context "#format" do
     let(:formatted_output) do

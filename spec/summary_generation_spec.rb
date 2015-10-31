@@ -79,7 +79,6 @@ describe ActiveRecordRecord::SummaryGeneration do
       end
 
       it "will produce a complete report" do
-        binding.pry
         stub_controller.print_ar_counts(options)
         expect(stub_file.file_contents).to match_array(expected_formatted_data)
       end

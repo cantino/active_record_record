@@ -17,6 +17,7 @@ module ActiveRecordRecord
       tree      = options.fetch(:tree, Thread.current)
       file      = options.fetch(:file, File.open(path, "w"))
       time      = options.fetch(:time_class, Time)
+      open_file = options.fetch(:open_file, true)
 
       if options[:file]
         file_given = true
@@ -44,7 +45,7 @@ module ActiveRecordRecord
         file.puts
         file.puts "Request took approximately #{time.now.to_f - tree[:request_start_time].to_f} seconds."
         file.close unless file_given
-        system("open #{path} -t -g")
+        system("open #{path} -t -g") if open_file
       else
         file.close
         File.unlink(path) unless file_given
