@@ -3,7 +3,6 @@ require_relative "../lib/active_record_record/helper"
 
 describe ActiveRecordRecord::Helper do
 
-  # Start of temporary hack
   before(:all) do
     class Rails
       def self.env
@@ -26,7 +25,6 @@ describe ActiveRecordRecord::Helper do
     Object.send(:remove_const, :Rails)
     Object.send(:remove_const, :Faker)
   end
-  # end of temporary hack
 
   describe ".track_time_as" do
     context "when in a rails developement environment" do
@@ -148,7 +146,7 @@ describe ActiveRecordRecord::Helper do
 
     context "replaces scary numbers with (?)" do
       context "replaced extra spaces with a single space" do
-        it "and fixes this situation '( 3232323  , empty things 23223 )'" do 
+        it "and fixes this situation '( 3232323  , empty things 23223 )'" do
           cleaned_query = ActiveRecordRecord::Helper.clean_queries(query)
           expected_query = " User Load (?.?ms) SELECT `users`.* FROM `users` WHERE `users`.`id` IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
           expect(cleaned_query).to eq(expected_query)
