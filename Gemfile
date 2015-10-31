@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem "pry", require: true
-  gem "awesome_print", require: true
-  gem 'pry-byebug', require: true
+  gem "pry"
+  gem "awesome_print"
+  gem 'pry-byebug'
 end
