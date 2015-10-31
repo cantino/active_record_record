@@ -3,25 +3,32 @@ require_relative "../lib/active_record_record/summary_generation"
 
 describe ActiveRecordRecord::SummaryGeneration do
 
-  class StubController
-    attr_accessor :controller_name, :action_name
-    include ActiveRecordRecord::SummaryGeneration
+  before(:all) do
+    class StubController
+      attr_accessor :controller_name, :action_name
+      include ActiveRecordRecord::SummaryGeneration
+    end
+
+    class StubFile
+      attr_accessor :file_contents
+
+      def initialize
+        @file_contents = []
+      end
+
+      def puts(content = "\n")
+        @file_contents << content + "\n"
+      end
+
+      def sync=(drop)
+        #noop
+      end
+    end
   end
 
-  class StubFile
-    attr_accessor :file_contents
-
-    def initialize
-      @file_contents = []
-    end
-
-    def puts(content = "\n")
-      @file_contents << content + "\n"
-    end
-
-    def sync=(drop)
-      #noop
-    end
+  after(:all) do
+    Object.send(:remove_const, :StubController)
+    Object.send(:remove_const, :StubFile)
   end
 
   describe "#clear_ar_counts" do

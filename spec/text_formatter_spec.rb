@@ -8,14 +8,13 @@ describe TextFormatter do
   let(:expected_output) { ExampleData::ExpextedData }
 
   context "#format" do
-    let!(:formatted_output) do
+    let(:formatted_output) do
       formatter = described_class.new
       formatter.format(ar_counts)
       formatter.lines
     end
 
     it "will format data into nice rows below the line that initated them" do
-
       expect(formatted_output).to eq(expected_output)
     end
   end

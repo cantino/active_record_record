@@ -24,6 +24,7 @@ describe ActiveRecordRecord::Helper do
   after(:all) do
     Object.send(:remove_const, :Rails)
     Object.send(:remove_const, :Faker)
+    Thread.current[:times] = nil
   end
 
   describe ".track_time_as" do
@@ -44,6 +45,7 @@ describe ActiveRecordRecord::Helper do
           expect(Thread.current[:times][:spaghetti][:sum]).to be_truthy
         end
       end
+
       context  "and COUNT_OBJECTS is false" do
         before do
           ENV['COUNT_OBJECTS'] = nil
