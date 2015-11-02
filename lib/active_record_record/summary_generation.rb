@@ -26,8 +26,8 @@ module ActiveRecordRecord
 
       file.puts "ActiveRecord counts for request to #{controller_name}##{action_name}\n\n"
 
-      printed_something, default_text  = formatter.format(tree[:ar_counts][:default])
-      file.puts(default_text) unless default_text.empty?
+      printed_something, formatted_output = formatter.format(tree[:ar_counts][:default])
+      file.puts(formatted_output) unless formatted_output.empty?
 
       file.puts "Timings:"
       (tree[:times] || {}).to_a.sort_by { |i| i.last[:sum] }.reverse.each do |key, obj|
@@ -47,7 +47,7 @@ module ActiveRecordRecord
         file.close unless file_given
         system("open #{path} -t -g") if open_file
       else
-        file.close
+        file.close unless file_given
         File.unlink(path) unless file_given
       end
     end
