@@ -35,7 +35,7 @@ module ActiveRecordRecord
 
         if tree[:ar_counts][key]
           _, custom_text = formatter.format(tree[:ar_counts][key], "\t\t\t")
-          file.puts(text) unless custom_text.empty?
+          file.puts(custom_text) unless custom_text.empty?
         end
 
         printed_something = true
