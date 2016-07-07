@@ -13,6 +13,8 @@ class TextFormatter
   end
 
   def format(stats)
+    return false unless stats
+
     stat_data = deep_copy(stats)
 
     printed_something = false

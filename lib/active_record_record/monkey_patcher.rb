@@ -3,102 +3,69 @@ require 'active_record_record/summary_generation'
 module ActiveRecordRecord
   module MonkeyPatcher
     def self.instrument_renders!
-      ActionView::Renderer.module_eval do
-        def render_with_time_logging(context, options, &block)
-          start_time = Time.now.to_f
-          render_without_time_logging(context, options, &block).tap do
-            if Thread.current[:do_counts]
-              place = Helper.clean_trace(caller)
-              duration = Time.now.to_f - start_time
-              key = Thread.current[:objects_key]
+      ActiveSupport::Notifications.subscribe(/\Arender_(partial|template)\.action_view\z/) do |_name, start, finish, _id, payload|
+        if Thread.current[:do_counts]
+          place = Helper.clean_trace([payload[:identifier]] + caller)
+          duration = finish.to_f - start.to_f
+          key = Thread.current[:objects_key]
 
-              Thread.current[:ar_counts] ||= {}
-              Thread.current[:ar_counts][key] ||= {}
-              Thread.current[:ar_counts][key][:render_data] ||= {}
-              Thread.current[:ar_counts][key][:render_data][:count] ||= 0
-              Thread.current[:ar_counts][key][:render_data][:count] += 1
+          Thread.current[:ar_counts] ||= {}
+          Thread.current[:ar_counts][key] ||= {}
+          Thread.current[:ar_counts][key][:render_data] ||= {}
+          Thread.current[:ar_counts][key][:render_data][:count] ||= 0
+          Thread.current[:ar_counts][key][:render_data][:count] += 1
 
-              Thread.current[:ar_counts][key][:render_data][place] ||= {}
-              Thread.current[:ar_counts][key][:render_data][place][:count] ||= 0
-              Thread.current[:ar_counts][key][:render_data][place][:count] += 1
-              Thread.current[:ar_counts][key][:render_data][place][:duration] ||= 0
-              Thread.current[:ar_counts][key][:render_data][place][:duration] += duration
-            end
-          end
+          Thread.current[:ar_counts][key][:render_data][place] ||= {}
+          Thread.current[:ar_counts][key][:render_data][place][:count] ||= 0
+          Thread.current[:ar_counts][key][:render_data][place][:count] += 1
+          Thread.current[:ar_counts][key][:render_data][place][:duration] ||= 0
+          Thread.current[:ar_counts][key][:render_data][place][:duration] += duration
         end
-
-        alias_method_chain :render, :time_logging
       end
     end
 
-    def self.instrument_query_cache!
-      ActiveRecord::ConnectionAdapters::QueryCache.class_eval do
-        def select_all(arel, name = nil, binds = [])
-          if @query_cache_enabled && !locked?(arel)
-            sql = to_sql(arel, binds)
+    def self.instrument_database_adapter!
+      ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, start, finish, _id, payload|
+        if Thread.current[:do_counts] && !%w[COMMIT BEGIN].include?(payload[:sql])
+          place = Helper.clean_trace(caller)
+          cleaned_query = Helper.clean_queries(payload[:sql])
+          key = Thread.current[:objects_key]
+          Thread.current[:ar_counts] ||= {}
+          Thread.current[:ar_counts][key] ||= {}
 
-            if @query_cache[sql].key?(binds)
-              if Thread.current[:do_counts]
-                place = Helper.clean_trace(caller)
-                cleaned_query = Helper.clean_queries(sql)
-                key = Thread.current[:objects_key]
+          if payload[:name] == 'SCHEMA'
+            # ignore
+          elsif payload[:name] == 'CACHE'
+            Thread.current[:ar_counts][key][:query_cache_data] ||= {}
+            Thread.current[:ar_counts][key][:query_cache_data][:count] ||= 0
+            Thread.current[:ar_counts][key][:query_cache_data][:count] += 1
 
-                Thread.current[:ar_counts] ||= {}
-                Thread.current[:ar_counts][key] ||= {}
-                Thread.current[:ar_counts][key][:query_cache_data] ||= {}
-                Thread.current[:ar_counts][key][:query_cache_data][:count] ||= 0
-                Thread.current[:ar_counts][key][:query_cache_data][:count] += 1
-
-                Thread.current[:ar_counts][key][:query_cache_data][place] ||= {}
-                Thread.current[:ar_counts][key][:query_cache_data][place][:count] ||= 0
-                Thread.current[:ar_counts][key][:query_cache_data][place][:count] += 1
-                Thread.current[:ar_counts][key][:query_cache_data][place][:queries] ||= {}
-                Thread.current[:ar_counts][key][:query_cache_data][place][:queries][cleaned_query] ||= 0
-                Thread.current[:ar_counts][key][:query_cache_data][place][:queries][cleaned_query] += 1
-              end
-            end
-
-            cache_sql(sql, binds) { super(sql, name, binds) }
+            Thread.current[:ar_counts][key][:query_cache_data][place] ||= {}
+            Thread.current[:ar_counts][key][:query_cache_data][place][:count] ||= 0
+            Thread.current[:ar_counts][key][:query_cache_data][place][:count] += 1
+            Thread.current[:ar_counts][key][:query_cache_data][place][:queries] ||= {}
+            Thread.current[:ar_counts][key][:query_cache_data][place][:queries][cleaned_query] ||= 0
+            Thread.current[:ar_counts][key][:query_cache_data][place][:queries][cleaned_query] += 1
           else
-            super
+            duration = finish.to_f - start.to_f
+
+            Thread.current[:ar_counts][key][:sql_data] ||= {}
+            Thread.current[:ar_counts][key][:sql_data][:count] ||= 0
+            Thread.current[:ar_counts][key][:sql_data][:count] += 1
+            Thread.current[:ar_counts][key][:sql_data][:duration] ||= 0
+            Thread.current[:ar_counts][key][:sql_data][:duration] += duration
+
+            Thread.current[:ar_counts][key][:sql_data][place] ||= {}
+            Thread.current[:ar_counts][key][:sql_data][place][:count] ||= 0
+            Thread.current[:ar_counts][key][:sql_data][place][:count] += 1
+            Thread.current[:ar_counts][key][:sql_data][place][:duration] ||= 0
+            Thread.current[:ar_counts][key][:sql_data][place][:duration] += duration
+            Thread.current[:ar_counts][key][:sql_data][place][:queries] ||= {}
+            Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query] ||= {:count => 0, :duration => 0}
+            Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query][:count] += 1
+            Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query][:duration] += duration
           end
         end
-      end
-    end
-
-    def self.instrument_mysql_adapter!
-      ActiveRecord::ConnectionAdapters::Mysql2Adapter.class_eval do
-        def execute_with_logging(*args, &block)
-          start = Time.now.to_f
-          execute_without_logging(*args, &block).tap do
-            if Thread.current[:do_counts] && args.last != :skip_logging
-              place = Helper.clean_trace(caller)
-              cleaned_query = Helper.clean_queries(args.first)
-              duration = Time.now.to_f - start
-              key = Thread.current[:objects_key]
-
-              Thread.current[:ar_counts] ||= {}
-              Thread.current[:ar_counts][key] ||= {}
-              Thread.current[:ar_counts][key][:sql_data] ||= {}
-              Thread.current[:ar_counts][key][:sql_data][:count] ||= 0
-              Thread.current[:ar_counts][key][:sql_data][:count] += 1
-              Thread.current[:ar_counts][key][:sql_data][:duration] ||= 0
-              Thread.current[:ar_counts][key][:sql_data][:duration] += duration
-
-              Thread.current[:ar_counts][key][:sql_data][place] ||= {}
-              Thread.current[:ar_counts][key][:sql_data][place][:count] ||= 0
-              Thread.current[:ar_counts][key][:sql_data][place][:count] += 1
-              Thread.current[:ar_counts][key][:sql_data][place][:duration] ||= 0
-              Thread.current[:ar_counts][key][:sql_data][place][:duration] += duration
-              Thread.current[:ar_counts][key][:sql_data][place][:queries] ||= {}
-              Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query] ||= {:count => 0, :duration => 0}
-              Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query][:count] += 1
-              Thread.current[:ar_counts][key][:sql_data][place][:queries][cleaned_query][:duration] += duration
-            end
-          end
-        end
-
-        alias_method_chain :execute, :logging
       end
     end
 

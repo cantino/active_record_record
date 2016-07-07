@@ -1,13 +1,13 @@
-require "spec_helper"
-require_relative "../lib/active_record_record/summary_generation"
-require_relative "support/example_data"
+require 'spec_helper'
+require_relative '../lib/active_record_record/summary_generation'
+require_relative 'support/example_data'
 
 describe ActiveRecordRecord::SummaryGeneration do
   include ExampleData
 
   before(:all) do
     class StubController
-      attr_accessor :controller_name, :action_name
+      attr_accessor :controller_name, :action_name, :request
       include ActiveRecordRecord::SummaryGeneration
     end
 
@@ -18,7 +18,7 @@ describe ActiveRecordRecord::SummaryGeneration do
         @file_contents = []
       end
 
-      def puts(content = "")
+      def puts(content = '')
         @file_contents << content + "\n"
       end
 
@@ -35,11 +35,11 @@ describe ActiveRecordRecord::SummaryGeneration do
 
   let(:stub_controller) { StubController.new }
 
-  describe "#clear_ar_counts" do
+  describe '#clear_ar_counts' do
     before do
-      Thread.current[:request_start_time] = "00:00:00"
-      Thread.current[:ar_counts] = { test: "I love ar_counts" }
-      Thread.current[:times] = { times: "Are changing" }
+      Thread.current[:request_start_time] = '00:00:00'
+      Thread.current[:ar_counts] = { test: 'I love ar_counts'}
+      Thread.current[:times] = { times: 'Are changing'}
       Thread.current[:do_counts] = false
       Thread.current[:objects_key] = :silly_user_key
       stub_controller.clear_ar_counts
@@ -53,8 +53,8 @@ describe ActiveRecordRecord::SummaryGeneration do
       Thread.current[:objects_key] = nil
     end
 
-    it "will reset all thread current variables" do
-      expect(Thread.current[:request_start_time]).to_not eq("00:00:00")
+    it 'will reset all thread current variables' do
+      expect(Thread.current[:request_start_time]).to_not eq('00:00:00')
       expect(Thread.current[:ar_counts]).to eq({})
       expect(Thread.current[:times]).to eq({})
       expect(Thread.current[:do_counts]).to eq(true)
@@ -63,8 +63,14 @@ describe ActiveRecordRecord::SummaryGeneration do
   end
 
 
-  describe "#print_ar_counts" do
-    context "when printing something" do
+  describe '#print_ar_counts' do
+    before do
+      ActiveRecordRecord.skip_path_regex = /skip/
+      stub_controller.request = Struct.new(:original_url).new(original_url)
+    end
+
+    context 'when the request url is allowed' do
+      let(:original_url) { 'some_allowed_url' }
       let(:stub_file) { StubFile.new }
       let(:stat_data) { ExampleData::AR_COUNT }
       let(:time_stub) { double("Timer", now: 100 ) }
@@ -78,21 +84,16 @@ describe ActiveRecordRecord::SummaryGeneration do
         }
       end
 
-      it "will produce a complete report" do
+      it 'will produce a complete report' do
         stub_controller.print_ar_counts(options)
         expect(stub_file.file_contents).to match_array(expected_formatted_data)
       end
     end
 
-    context "when aborting the print action" do
-      let(:stub_controller) { StubController.new }
+    context 'when the request url is not allowed' do
+      let(:original_url) { 'something_to_skip' }
 
-      before do
-        stub_controller.controller_name = "page_not_found"
-        expect(stub_controller.controller_name).to eq("page_not_found")
-      end
-
-      it "will return nil" do
+      it 'will return nil' do
         expect(stub_controller.print_ar_counts).to be_nil
       end
     end

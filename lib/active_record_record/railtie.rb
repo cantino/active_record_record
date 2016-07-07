@@ -1,5 +1,6 @@
 require 'active_record_record/mixins/action_controller'
 require 'active_record_record/mixins/active_record'
+require 'active_record_record/settings'
 
 module ActiveRecordRecord
   class Railtie < Rails::Railtie
@@ -11,12 +12,11 @@ module ActiveRecordRecord
       ActiveRecord::Base.include ActiveRecordRecord::Mixins::ActiveRecord
     end
 
-    if ENV['COUNT_OBJECTS'] && Rails.env.development?
+    if ENV['COUNT_OBJECTS'] == 'true' && Rails.env.development?
       require 'active_record_record/monkey_patcher'
       config.after_initialize do
         MonkeyPatcher.instrument_renders!
-        MonkeyPatcher.instrument_query_cache!
-        MonkeyPatcher.instrument_mysql_adapter!
+        MonkeyPatcher.instrument_database_adapter!
         MonkeyPatcher.log_model_instantiation!
         MonkeyPatcher.hook_request_cycle!
       end

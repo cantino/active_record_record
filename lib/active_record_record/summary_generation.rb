@@ -1,4 +1,5 @@
-require_relative "text_formatter"
+require 'active_record_record/text_formatter'
+require 'active_record_record/settings'
 
 module ActiveRecordRecord
   module SummaryGeneration
@@ -11,7 +12,8 @@ module ActiveRecordRecord
     end
 
     def print_ar_counts(options = {})
-      return if controller_name == 'page_not_found'
+      return if ActiveRecordRecord.skip_path_regex && ActiveRecordRecord.skip_path_regex === request.original_url
+
       path      = "/tmp/#{Time.now.to_f}.counts.txt"
       formatter = options.fetch(:formatter, TextFormatter)
       tree      = options.fetch(:tree, Thread.current)
@@ -22,7 +24,6 @@ module ActiveRecordRecord
       if options[:file]
         file_given = true
       end
-
 
       file.puts "ActiveRecord counts for request to #{controller_name}##{action_name}\n\n"
 

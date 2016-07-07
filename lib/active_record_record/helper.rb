@@ -27,13 +27,13 @@ module ActiveRecordRecord
     end
 
     def self.clean_trace(stack, length = 4)
-      escaped_rails_root = Regexp.escape(Rails.root.to_s)
+      @escaped_rails_root ||= Regexp.escape(Rails.root.to_s)
 
       cleaned_trace =
-        stack.find_all { |i| i =~ /#{escaped_rails_root}\/(lib|app)/ }
+        stack.find_all { |i| i =~ /#{@escaped_rails_root}\/(lib|app)/ }
              .reject { |i| i =~ /railtie\.rb/ }
              .map do |line|
-                line.gsub(/^#{escaped_rails_root}\//, '')
+                line.gsub(/^#{@escaped_rails_root}\//, '')
                     .gsub(/^app\/(views|models|controllers)?\/?/, '')
                     .gsub(/:in\s+._app_views_.*/, '')
              end
