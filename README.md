@@ -10,7 +10,7 @@ Note: at the moment this development tool is Mac only.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_record_record', git: 'https://github.com/mavenlink/active_record_record'
+gem 'active_record_record', git: 'https://github.com/cantino/active_record_record'
 ```
 
 And then execute:
@@ -44,7 +44,7 @@ To release a new version, update the version number in `version.rb`, and then ru
 
 ## Contributing
 
-1. Fork it ( https://github.com/mavenlink/active_record_record/fork )
+1. Fork it ( https://github.com/cantino/active_record_record/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
