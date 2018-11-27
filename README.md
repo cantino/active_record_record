@@ -10,7 +10,7 @@ Note: at the moment this development tool is Mac only.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_record_record'
+gem 'active_record_record', git: 'https://github.com/mavenlink/active_record_record'
 ```
 
 And then execute:
