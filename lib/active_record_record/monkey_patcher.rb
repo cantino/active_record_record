@@ -97,8 +97,8 @@ module ActiveRecordRecord
       ActionController::Base.class_eval do
         include ActiveRecordRecord::SummaryGeneration
 
-        before_filter :clear_ar_counts
-        after_filter :print_ar_counts
+        before_action :clear_ar_counts
+        after_action :print_ar_counts
       end
     end
   end
